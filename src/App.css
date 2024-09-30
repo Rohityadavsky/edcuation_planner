@@ -1,5 +1,7 @@
 body{
-    background-color: teal;
+  background-image: url("https://img.freepik.com/free-photo/abstract-empty-smooth-light-pink-studio-room-background-use-as-montage-product-display-banner-template_1258-67260.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .container {
@@ -29,7 +31,7 @@ body{
     border: 1px solid black;
   }
 
-  button{
+  .btn{
     padding: 14px 20px;
     margin: 8px;
     background-color:#282c34;

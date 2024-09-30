@@ -1,68 +1,90 @@
-import { useState } from "react";
-import { useEffect } from "react";
-
-
-const Main = () =>{
-
-    const [subject, setSubject] = useState('');
-    const [hours, setHours] = useState('');
-
-    const onClickButton = () => {
-        alert("Please check!!");
-        console.log("Subject: " + subject + ", Hours: " + hours);
+import { useEffect, useState } from "react";
+const Main = () => {
+  const [subject, setSubject] = useState("");
+  const [hours, setHours] = useState("");
+  const [planner, setPlanner] = useState([]);
+  useEffect(() => {
+    /**
+     * 1. Check if the data is present in local storage
+     * 2. If present use the data and render it on screen
+     */
+    const plannerData = localStorage.getItem("plannerData");
+    console.log(plannerData);
+    if (plannerData) {
+        console.log("plannerData available");
+        setPlanner(JSON.parse(plannerData));
     }
-
-    useEffect(()=>{
-        console.log("Subject: " + subject + ", Hours: " + hours);
-    },[subject, hours]);
-    
-    const SubjectInput = (e) => {
-        setSubject(e.target.value);
-    }
-    
-    const HoursInput = (e) => {
-        setHours(e.target.value);
-    }
-    
-    const AddButton = () => {
-        onClickButton();
-        setSubject('');
-        setHours('');
-    }
-    
-
-    const ResetButton = () =>{
-        setSubject('');
-        setHours('');
-        alert("Reset Successfully!!");
-        console.log("Reset Successful!!");
-    }
-    
-    return (
-        <>
-        <div className="container">
+  }, []); // Mounting phase
+  const handleAddClick = (e) => {
+    e.preventDefault();
+    const obj = {
+      subject: subject,
+      hours: hours,
+    };
+    const plannerArray = [...planner, obj];
+    setPlanner(plannerArray);
+    localStorage.setItem("plannerData", JSON.stringify(plannerArray));
+    setSubject("");
+    setHours("");
+  };
+  const handlePlusBtn = (index) => {
+    // const plannerCopy = [...planner];
+    // const plannerCopy = Array.from(planner);
+    // JSON.parse(JSON.stringify(planner)) // Hack for deep copy
+    // const plannerCopy = planner;
+    const updatedObj = {
+      ...plannerCopy[index],
+      hours: parseInt(plannerCopy[index].hours) + 1, // Add 1 to existing hours key at a prticular index
+    };
+    plannerCopy.splice(index, 1, updatedObj);
+    setPlanner(plannerCopy);
+  };
+  return (
+    <>
+    <div className="container">
         <div className="header">
-        <h3>Geekster Education Planner</h3>
-        </div>
-        <div className="sub">
-        <input type="text" name="name" placeholder="Subject" id="subject"/>
-        <input type="number" name="number" placeholder="Hou"/>
-        </div>
-        <div className="btn">
-        <button onClick={onClickButton} >Add</button>
-        <button onClick={ResetButton}>RESET</button>
-        </div>
-
-        <div>
-            <h3>Added Subjects:</h3>
-            <div>
-                {subject? <p>{subject} - {hours} Hours</p> : <p>No Subjects added yet</p>}
-            </div>
-           
-        </div>
-           
-        </div>
-        </>
-    );
-}
+      <h1>Geekster Education Planner</h1>
+      </div>
+     
+      <form>
+        <input
+          onChange={(e) => {
+            setSubject(e.target.value);
+          }}
+          type="text"
+          placeholder="subject"
+          value={subject}
+        />
+        <input
+          onChange={(e) => {
+            setHours(e.target.value);
+          }}
+          value={hours}
+          type="number"
+          step={1}
+          placeholder="hours"
+        />
+        <button className="btn" onClick={handleAddClick}>Add</button>
+        
+      </form>
+      {planner.map((data, index) => {
+        return (
+          <div key={`card_${index}`}>
+            {data.subject} - {data.hours} hours
+            <button
+              onClick={() => {
+                handlePlusBtn(index);
+              }}
+            >
+              +
+            </button>
+            <button>-</button>
+          </div>
+        );
+      })}
+      </div>
+       
+    </>
+  );
+};
 export default Main;
